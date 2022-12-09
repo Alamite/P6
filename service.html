@@ -36,7 +36,7 @@
 		Make an appointment for Roadmaster service from the safety and comfort of your home.
 	</div>
 	<div>
-	<form>
+	<form name="serviceReq">
 		<div class="elem-group">
 		  <label for="name">Your Name</label>
 		  <input type="text" id="name" name="visitor_name" placeholder="John Doe" onkeypress="return isalphaKey(event)" required>
@@ -45,23 +45,27 @@
 		<div class="elem-group">
 		  <label for="email">Your E-mail</label>
 		  <input type="email" id="email" name="visitor_email" placeholder="john.doe@email.com" required>
+		  <span id = "mail_error" style = "color:red"></span>
 		</div>
 		<div class="elem-group">
 		  <label for="phone">Your Phone</label>
 		  <input type="tel" id="phone" name="visitor_phone" placeholder="498-348-3872" onkeypress="return isNumberKey(event)" required>
+		  <span id = "phone_error" style = "color:red"></span>
 		</div>
 		<div class="elem-group">
 		  <label for="room-selection">Select State</label>
-		  <select id="room-selection" name="room_preference" required>
+		  <select id="state" name="room_preference" required>
 			  <option value="">State</option>
 			  <option value="KA">Karnataka</option>
 			  <option value="KL">Kerala</option>
 			  <option value="TN">Tamil Nadu</option>
 		  </select>
+		  <span id = "state_error" style = "color:red"></span>
 		</div>
 		<div class="elem-group">
 			<label for="checkout-date">Date</label>
-			<input type="date">
+			<input id = "date" type="date">
+			<span id = "date_error" style = "color:red"></span>
 		  </div>
 		<div class="elem-group">
 		  <label for="message">Explain your issue with the bike</label>
@@ -179,16 +183,20 @@
 	testEle = document.getElementById("spckey").value;
 	testEle2 = document.getElementById("spckey");
     var re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})$/;
-    if (re.test(testEle)!= true) {
+    /*if (re.test(testEle)!= true) {
 		testEle2.style.border = "red solid 3px";
 		alert(pswformat);
         return false;
 	}
-	testEle2.style.border = "green solid 3px";
+	testEle2.style.border = "green solid 3px";*/
 
-	alert("Submited Successfully");
+	cookievalue = escape(document.serviceReq.visitor_name.value);
+	document.cookie = "name=" + cookievalue;
+	alert("Thank you "+cookievalue+". You're request has been submitted");
+	
 
 }
+
 
 //locking alphabets for phone
 function isNumberKey(evt)
