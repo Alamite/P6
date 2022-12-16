@@ -1,7 +1,7 @@
 <html>
 <title>TRIPPER-Service</title>
 <link rel='stylesheet' href="style.css">
-<body style="background-color:black;">
+<body onload="fillbox()" style="background-color:black;">
 	<div class="navbar">
 		<h1 class="logo">Roadmaster</h1>
 		<ul class="nav">
@@ -25,7 +25,7 @@
 		padding-left: 20px;">
 	
 	<h1>Book a <span style="color: yellow;">Service</span></h1>
-	<p>Find your nearest service center<button class= 'btn' onclick="getLocation()">Detect my location</button>
+	<p>Find your nearest service center<a href="#map"><button class= 'btn' onclick="getLocation()">Detect my location</button></a>
 	
 	<div id="loc"></div>
 	</div>
@@ -39,22 +39,22 @@
 	<form name="serviceReq">
 		<div class="elem-group">
 		  <label for="name">Your Name</label>
-		  <input type="text" id="name" name="visitor_name" placeholder="John Doe" onkeypress="return isalphaKey(event)" required>
+		  <input type="text" id="name" name="visitor_name" onchange="func1()" placeholder="John Doe" onkeypress="return isalphaKey(event)" required>
 		  <span id = "name_error" style = "color:red"></span>
 		</div>
 		<div class="elem-group">
 		  <label for="email">Your E-mail</label>
-		  <input type="email" id="email" name="visitor_email" placeholder="john.doe@email.com" required>
+		  <input type="email" id="email" name="visitor_email" onchange="func1()" placeholder="john.doe@email.com" required>
 		  <span id = "mail_error" style = "color:red"></span>
 		</div>
 		<div class="elem-group">
 		  <label for="phone">Your Phone</label>
-		  <input type="tel" id="phone" name="visitor_phone" placeholder="498-348-3872" onkeypress="return isNumberKey(event)" required>
+		  <input type="tel" id="phone" name="visitor_phone" onchange="func1()" placeholder="498-348-3872" onkeypress="return isNumberKey(event)" required>
 		  <span id = "phone_error" style = "color:red"></span>
 		</div>
 		<div class="elem-group">
 		  <label for="room-selection">Select State</label>
-		  <select id="state" name="room_preference" required>
+		  <select id="state" onchange="func1()" name="room_preference" required>
 			  <option value="">State</option>
 			  <option value="KA">Karnataka</option>
 			  <option value="KL">Kerala</option>
@@ -64,7 +64,7 @@
 		</div>
 		<div class="elem-group">
 			<label for="checkout-date">Date</label>
-			<input id = "date" type="date">
+			<input id = "date" onchange="func1()" type="date">
 			<span id = "date_error" style = "color:red"></span>
 		  </div>
 		<div class="elem-group">
@@ -79,20 +79,14 @@
 		  </div>
 	  </form>
 	</div>
+	<div id="map" class="map"></div>
 	<br>
-	<br>
-	<img src="map.png" width="1000" height="1106"
-	alt="World Map" usemap="#worldmap">
-        <map name="worldmap">
-            <area shape="rect" coords="404, 872, 442, 918" alt="Chennai"
-				    href="https://www.motomecha.com/">
-
-            <area shape="rect" coords="372, 686, 396, 726" alt="Hyderabad"
-				href="https://i-k-bike-service-centre.business.site/?utm_source=gmb&utm_medium=referral">
-        </map>
-    </div>
+</div>
 </center>
+
 <script>
+	var lat = 10.5276;
+	var lon = 76.2144;
 	var x = document.getElementById("loc");
 	function getLocation() { 
 	  if (navigator.geolocation) {
@@ -106,6 +100,9 @@
 
 	  x.innerHTML = "Latitude: " + position.coords.latitude +
 	  "<br>Longitude: " + position.coords.longitude;
+	  lat = position.coords.latitude;
+	  lon = position.coords.longitude;
+	  initMap();
 	}
 
 	function validate() {
@@ -221,6 +218,88 @@ function isalphaKey(evt)
 
          return true;
       }
+
+	  //cookies
+	  function setCookie(cname, cvalue, exdays) 
+        {
+            const d = new Date();
+            d.setTime(d.getTime() + (exdays*24*60*60*1000));
+            let expires = "expires="+ d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+        function func1(x)
+        {
+            
+            var date=document.getElementById("date").value;
+            var name=document.getElementById("name").value;
+            var email=document.getElementById("email").value;
+			var phone=document.getElementById("phone").value;
+			var state=document.getElementById("state").value;
+
+            setCookie("codate",date,2);
+            setCookie("coname",name,2);
+            setCookie("coemail",email,2);
+			setCookie("costate",state,2);
+			setCookie("cophone",phone,2);
+        }
+
+		function getCookie(cname) 
+        {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for(let i = 0; i <ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        function fillbox()
+        {
+            document.getElementById("name").value=getCookie("coname");
+            document.getElementById("email").value=getCookie("coemail");
+            document.getElementById("phone").value=getCookie("cophone");
+			document.getElementById("state").value=getCookie("costate");
+			document.getElementById("date").value=getCookie("codate");
+
+        }
+
+        function remove()
+        {
+            alert("Submitted Successfully");
+            document.cookie = "cophone"+"=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = "coname"+"=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = "codate"+"=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+			document.cookie = "coemail"+"=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+			document.cookie = "costate"+"=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            location.reload();
+        }
+
+
+	  //Google map api
+	  function initMap(){
+			var options = {
+				zoom:14,
+				center:{lat:lat,lng:lon}
+			}
+			var map = new google.maps.Map(document.getElementById('map'),options);
+			var marker1 = new google.maps.Marker({position:{lat:12.944420,lng:77.603431},map:map});     
+
+			var infowindow1 = new google.maps.InfoWindow({content:'Art of motorcycles'});
+
+			marker1.addListener('click', function(){
+				infowindow1.open(map, marker1);
+			});
+	}
 	</script>
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOVCinBd_w5--BzHPs-N4qL4I476L_GDM&callback=initMap"
+type="text/javascript"></script>
 </body>
 </html>
